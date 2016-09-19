@@ -1,0 +1,27 @@
+#set($page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page/system-data-structure"))
+
+#set($url = $_XPathTool.selectSingleNode($contentRoot, "//system-page"))
+  <meta property="og:url" content="http://www.sitename.edu${url.getChild('path').value}.HTM" />
+
+#set($title = $_XPathTool.selectSingleNode($page, "facebookContent/headline").value)
+  #if ($title != "")    
+    <meta property="og:title" content="${title}" />
+  #else
+    <meta property="og:title" content="titleName" />
+  #end
+  
+#set($image = $_XPathTool.selectSingleNode($page, "facebookContent/image/path").value)
+  #if ($image != "/")
+    <meta property="og:image" content="http://www.sitename.edu${image}"/>
+  #else
+    <meta property="og:image" content="http://www.sitename.edu/_files/images/logos/Logo.jpg" />
+  #end
+    
+#set ($description = $_XPathTool.selectSingleNode($page, "facebookContent/main-content").value)
+  #if ($description != "")
+    <meta property="og:description" content="${description}" />
+  #else
+    <meta property="og:description" content="Description here" />
+  #end
+  
+
