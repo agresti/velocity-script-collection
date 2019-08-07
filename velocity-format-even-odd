@@ -1,1 +1,40 @@
+#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
+#set ( $data = $page.getChild("system-data-structure") )
+#set ( $newsContentBlocks = $_XPathTool.selectNodes($data, "newsContentBlocks") )
 
+  <div class="pageColBottom">
+    <article class="collegeHighlights primaryColor">
+      <h1 class="lightTextOverride">College News 
+        <a class="moreNews lightTextOverride" href="#">More News</a>
+      </h1>
+      
+#foreach ($ncBlock in $newsContentBlocks)
+
+#set ( $newsImage = $_XPathTool.selectSingleNode($ncBlock, "newsImage") )
+#set ( $newsImage_url = $newsImage.getChild("link").value)
+#set ( $newsImage_alt = $newsImage.getChild("description").value)
+#set ( $newsText = $ncBlock.getChild("newsText").value )
+#set ( $newsLink = $_XPathTool.selectSingleNode($ncBlock, "newsLink/path").value )
+
+#if ($_MathTool.mod($foreach.index, 2) == 1)      
+      <div class="newsRight">
+        <div class="newsArticle">
+          <img alt="${newsImage_alt}" height="150" src="${newsImage_url}" width="150"/>
+          <p>$newsText 
+            <a href="${newsLink}">Read More &gt;</a>
+          </p>
+        </div>
+      </div>
+#else     
+      <div class="newsLeft">
+        <div class="newsArticle">
+          <img alt="${newsImage_alt}" height="150" src="${newsImage_url}" width="150"/>
+          <p>$newsText 
+            <a href="${newsLink}">Read More &gt;</a>
+          </p>
+        </div>
+      </div>
+#end      
+#end    
+    </article>    
+  </div>
