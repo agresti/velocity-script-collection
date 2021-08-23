@@ -1,0 +1,28 @@
+<script type="text/javascript">
+// <![CDATA[#protect
+//limit description to 530 characters
+$(document).ready(function() {
+    
+    String.prototype.allReplace = function(obj) {
+        var retStr = this;
+        for (var x in obj) {
+            retStr = retStr.replace(new RegExp(x, 'g'), obj[x]);
+        }
+        return retStr;
+    };
+
+    $(".classDescriptionLimit").text(function(index, currentText) {
+        
+        var limit = currentText.substr(0, 530);
+        if (limit.length >= 530) {
+
+            return limit.allReplace({'â€™':"'",'â€“':'-'}) + "...";
+        }
+        else {
+            return limit.allReplace({'â€™':"'",'â€“':'-'});
+        }
+    });
+    
+});
+// #protect]]>
+</script>
