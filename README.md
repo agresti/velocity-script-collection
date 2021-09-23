@@ -6,3 +6,6 @@ A collection of Velocity scripts for Cascade CMS.
 
 ## velocity-format-even-odd
 🌳 *Two different classes to alternate between in a foreach loop.*
+
+## sort-folder-elements
+🌳 *The Velocity script sorts elements in a folder by title, judgment and displays elements on the index page. The current Folder XML block needs to be assigned to the same region.*
