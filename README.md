@@ -9,3 +9,6 @@ A collection of Velocity scripts for Cascade CMS.
 
 ## sort-folder-elements
 🌳 *The Velocity script sorts elements in a folder by title, judgment and displays elements on the index page. The current Folder XML block needs to be assigned to the same region.*
+
+## course-catalog-program-script
+🌳 *Course Catalog script. Displays the list of classes for a program and opens the requirements dropdown on click. Calling page index block is required.*
