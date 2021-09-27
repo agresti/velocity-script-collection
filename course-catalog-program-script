@@ -1,0 +1,186 @@
+#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page") )
+#set ( $data = $page.getChild("system-data-structure") )
+#set ( $content = $data.getChild("content") )
+
+## get Requirements group
+#set( $requirements = $_XPathTool.selectNodes($data, "requirements" ) )
+
+## get Course page
+#set ( $coursePage = $_XPathTool.selectNodes($data, "requirements/courses/coursePage") )
+
+#set ( $notes = $data.getChild("notes") )
+#set ( $standReq = $_XPathTool.selectSingleNode($data, "admissionReq/standReq") ) 
+#set ( $specialReq = $_XPathTool.selectSingleNode($data, "admissionReq/specialReq") )
+
+
+$_SerializerTool.serialize($content, true)
+
+## accreditations
+#set ( $accreditationBlocks = $_XPathTool.selectNodes($data, "accreditationBlock") )
+#set ( $accreditationPath = $_XPathTool.selectSingleNode($data, "accreditationBlock/path").value )
+    #if ( $accreditationPath != "/" )
+    <p class="reqHeader">Accreditation</p>
+        #foreach ( $block in $accreditationBlocks)
+            #set ($content = $block.getChild("content"))
+            $_SerializerTool.serialize($content, true)
+        #end
+    #end
+      
+## requirements section
+## #if ( $coursePagePath != "/" )
+## <h3>Requirements</h3>
+
+    ## get Requirements Section
+    #foreach ( $requirement in $requirements )
+        ## get Title for Requirements
+        ###set ( $reqTitle = $requirement.getChild("reqTitle").value )
+        #set ( $reqTitle = $requirement.getChild("reqTitle"))
+        #set ($total = $requirement.getChild("total") )
+        ##  for wysiwyg: 
+        #set ( $helpReqText = $requirement.getChild("helpReqText") )
+    
+    #if ($reqTitle != "")
+            ##<p class="reqHeader">$reqTitle</p>
+            <p class="reqHeader">$_SerializerTool.serialize($reqTitle, true)</p>
+    #end
+            ##<p>$helpReqText</p>
+            <p style="margin-left:30px;">$_SerializerTool.serialize($helpReqText, true)</p> 
+        
+    <table class="reqList">
+        <tbody>    
+            ## get Course section
+            #set( $courses = $_XPathTool.selectNodes($requirement, "courses" ) )
+                #foreach ( $course in $courses )
+                    #set ( $coursePagePath = $_XPathTool.selectSingleNode($course, "coursePage/path").value )
+                        #if ( $coursePagePath != "/" )
+                        
+                            #set ( $symbol = $course.getChild("symbol") )
+                                                                                          
+                            ## get Course pages
+                            #set ( $coursePage = $course.getChild("coursePage") ) 
+                            #set ( $link = $coursePage.getChild("link").value )
+                           
+                            #set ( $num = $_XPathTool.selectSingleNode($coursePage, "dynamic-metadata[name='breadcrumb']/value") )
+                            #set ( $name = $coursePage.getChild("title").value )
+                            #set ( $description = $_XPathTool.selectSingleNode($coursePage, "content/system-data-structure/description").value )
+                            #set ( $grade = $_XPathTool.selectNodes($coursePage, "content/system-data-structure/grade/value") )
+
+                            #set ( $courseCorequisite = $_XPathTool.selectNodes($coursePage, "content/system-data-structure/courseCorequisite/coreq[path!='/']") )
+                            #set ( $courseTimeFrames   = $_XPathTool.selectNodes($coursePage, "dynamic-metadata[name='courseTimeFrames']/value"))
+                            #set ( $lecture = $_XPathTool.selectSingleNode($coursePage, "content/system-data-structure/lecture").value )
+                            #set ( $lab = $_XPathTool.selectSingleNode($coursePage, "content/system-data-structure/lab").value )
+                            #set ( $credit = $_XPathTool.selectSingleNode($coursePage, "content/system-data-structure/credit").value )
+                            #set ( $credit = $_MathTool.toInteger($credit) )
+                            
+                        <tr class="notSelected">
+                            
+                            ##<td>${num}</td> <td><a href="${link}" onClick="showOrHide(this); return false;">${name}</a></td> <td>${credit}</td>
+                            
+                            <td>$_EscapeTool.xml($num.value)</td> <td><a href="${link}" onClick="showOrHide(this); return false;">${name}</a></td> <td>${credit}</td>
+                            <td>$_SerializerTool.serialize($symbol, true)</td>
+                        </tr>
+                        
+                        <tr class="hidden">
+                            <td class="reqDescription">
+                                
+                        ## dropdown section of the page
+                                <p class="reqDecLeft">
+                                    Lec: ${lecture} Lab: ${lab} Credit:${credit}<br />    
+                                        ${description}<a href="${link}">Learn More</a>                             
+                                </p>
+                                
+                            #set( $prerequisiteSet = $_XPathTool.selectNodes($coursePage, "content/system-data-structure/coursePrerequisite" ) )
+                            #set ( $coursePrerequisite = $_XPathTool.selectNodes($coursePage, "content/system-data-structure/coursePrerequisite/prereq[path!='/']") )
+                                                              
+                                #if ($coursePrerequisite.size() > 0)
+                                    <p class="reqDecRight"><strong>Prerequisites</strong><br />
+                                
+                                                              
+    #foreach ($coursePre in $prerequisiteSet)
+        #set ( $prereqs = $_XPathTool.selectNodes($coursePre, "prereq[path!='/']") )
+            #showPrerequisites($prereqs)
+                #macro ( showPrerequisites $plist)
+                    #if ( $plist.size() > 0 )
+                        $_SortTool.addSortCriterion("name", "en", "text", "ascending", "upper-first")
+                        $_SortTool.sort($plist)
+                        #foreach ( $p in $plist )
+                            #set ( $ptitle = $p.getChild("title") )
+                            #set ( $pcourse = $_XPathTool.selectSingleNode($p, "dynamic-metadata[name='breadcrumb']/value") )
+                            #set ( $plink = $p.getChild("link").value )
+
+                            ##Prefix and Number only:
+                            <a href="${plink}" target="_blank">$_EscapeTool.xml($pcourse.value)</a>
+                        #end
+                    
+                    #end
+                #end
+                
+                #set ( $prereqTextField = $coursePre.getChild("prereqTextField") )
+                $prereqTextField.value
+                
+                #set ($prereqandOrChoice = $_XPathTool.selectNodes($coursePre, "prereqandOr/value"))
+                    #if ($prereqandOrChoice.size() > 0)
+                
+                        #foreach ($prereqendOr in $prereqandOrChoice)
+                            $_EscapeTool.xml($prereqendOr.value)
+                        #end
+                
+                    #end
+    #end ##
+    
+                            </p> ## END <p class="reqDecRight">
+                            #end ## END #if ($coursePrerequisite.size() > 0)  
+                            </td>
+                        </tr>
+                                               
+                        #end  ## END #if ( $coursePagePath != "/" )  
+                    #set ( $or_course = $course.getChild("or_course") )
+                    ###if ( $or_course != "")
+                        <td>$_EscapeTool.xml($or_course.value)</td>
+                    ###end    
+                 #end ##END of #foreach ( $course in $courses )                          
+        </tbody>
+    </table>
+    
+                #set ( $requirements_details = $requirement.getChild("requirements_details") )
+                <p style="margin-left:30px;">$_SerializerTool.serialize($requirements_details, true)</p>
+                
+   <table class="reqList">  
+        <tbody>
+                  
+                <tr class="totalCredits">
+                            
+                                #if ( $total.value != "" )
+	                                <td>Total:</td>
+	                                <td>&#160;</td>
+	                                <td>$_SerializerTool.serialize($total, true)</td>                                              
+	                          
+    	                        #end
+                        </tr>
+                        </tbody>
+    </table>
+                
+    #end
+
+#if ($notes.value != "")
+    <p>$_SerializerTool.serialize($notes, true)</p>
+#end
+#if ($standReq.value == "Yes")
+    <p class="reqHeader">Admission Requirements</p>
+	<p>Admission into this program requires proof of high school graduation (or GED) and qualifying placement levels.</p>
+#end
+ #if ($specialReq != "")
+    $_SerializerTool.serialize($specialReq, true)
+ #end
+
+## gainful employment
+#set ( $gainfulEmplSection = $_XPathTool.selectNodes($data, "gainfulEmplSection" ) )
+    #foreach ($lLink in $gainfulEmplSection)
+        #set ( $gainfulEmplTitle = $lLink.getChild("gainfulEmplTitle").value )
+        #set ( $gainfEmplLink = $lLink.getChild("gainfulEmplLink").value)
+
+        #if ( $gainfulEmplTitle != "" )
+            <p class="reqHeader">Gainful Employment</p>
+            <a href="${gainfEmplLink}" target="_blank"><p>$gainfulEmplTitle</p></a>
+        #end
+    #end
