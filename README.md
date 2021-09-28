@@ -12,3 +12,6 @@ A collection of Velocity scripts for Cascade CMS.
 
 ## course-catalog-program-script
 🌳 *Course Catalog script. Displays the list of classes for a program and opens the requirements dropdown on click. Calling page index block is required.*
+
+## next-page-format
+🌳 *Switching between pages on icon click. The current folder block is needed.*
