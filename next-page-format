@@ -1,0 +1,26 @@
+#set ( $currentPage = $_XPathTool.selectSingleNode($contentRoot, "system-page[@current]"))
+
+## PREVIOUS PAGE
+#set ($previousPage = $_XPathTool.selectSingleNode($currentPage, "preceding-sibling::system-page[1]/link") )
+## Set if else for index page
+###set ($previousPage = $_XPathTool.selectSingleNode($currentPage, "preceding-sibling::system-page[name !='index']/link") )
+
+## NEXT PAGE
+#set ($nextPage = $_XPathTool.selectSingleNode($currentPage, "following-sibling::system-page/link") )
+## Set if else for index page
+###set ($nextPage = $_XPathTool.selectSingleNode($currentPage, "following-sibling::system-page[name !='index']/link") )
+
+<div style="float: right;">
+#if ($previousPage.value == $null)
+    <a class="classPrevious" href="https://www.index.html">
+        <img title="Previous Page" onmouseout="this.src='/page-previous_faded.gif'" onmouseover="this.src='https://www.page-previous.gif'" src="https://www.page-previous_faded.gif" alt="Previous Page" border="0"/></a>
+    <a class="classNext" href="${nextPage.value}">
+        <img title="Next Page" onmouseout="this.src='https://www.page-next_faded.gif'" onmouseover="this.src='https://www.page-next.gif'" src="https://www.page-next_faded.gif" alt="Next Page" border="0"/></a>
+
+#else
+    <a class="classPrevious" href="${previousPage.value}">
+        <img title="Previous Page" onmouseout="this.src='https://www.page-previous_faded.gif'" onmouseover="this.src='https://www.page-previous.gif'" src="https://www.page-previous_faded.gif" alt="Previous Page" border="0"/></a>
+    <a class="classNext" href="${nextPage.value}">
+        <img title="Next Page" onmouseout="this.src='https://www.page-next_faded.gif'" onmouseover="this.src='https://www.page-next.gif'" src="https://www.page-next_faded.gif" alt="Next Page" border="0"/></a>
+#end
+</div>
