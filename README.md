@@ -15,3 +15,6 @@ A collection of Velocity scripts for Cascade CMS.
 
 ## next-page-format
 🌳 *Switching between pages on icon click. The current folder block is needed.*
+
+## category-index-page
+🌳 *The current folder index block is needed. Pulling sub-category metadata and alternating on the page into two columns.* 
