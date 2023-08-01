@@ -1,0 +1,13 @@
+#set ( $page = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page"))
+#set ( $data = $page.getChild("system-data-structure"))
+#set ( $headerPicture = $_XPathTool.selectSingleNode($data, "headerPicture/path").value )
+#set ( $headerPictureCropped = $headerPicture.replaceAll("full", "cropped") )
+#set ( $headerPicture_alt = $_XPathTool.selectSingleNode($data, "headerPicture/keywords").value )
+
+ #if ( $headerPicture != "/")
+		<picture>
+		    <source media="(max-width: 800px)" src="${headerPictureCropped}"/>
+		    <source media="(min-width: 801px)" src="${headerPicture}"/>
+			<img alt="${headerPicture_alt}" id="header-image" src="${headerPicture}"/>
+		</picture>
+ #end
