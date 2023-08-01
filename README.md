@@ -1,6 +1,9 @@
 # velocity-script-collection
 A collection of Velocity scripts for Cascade CMS.
 
+## dynamic-picture
+🌳 *point to the picture dynamically by replacing the part of the  string.*
+
 ## velocity-format-facebook
 🌳 *Format, when it tied to the corresponding region of the template, it will pull the image and description provided by the user when sharing the particular page on facebook. If img and description are not provided, it will pull the default.*
 
