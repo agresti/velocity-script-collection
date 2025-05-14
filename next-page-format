@@ -1,26 +1,37 @@
-#set ( $currentPage = $_XPathTool.selectSingleNode($contentRoot, "system-page[@current]"))
+#set ( $currentPage = $_XPathTool.selectSingleNode($contentRoot, "system-page[@current]") )
 
-## PREVIOUS PAGE
-#set ($previousPage = $_XPathTool.selectSingleNode($currentPage, "preceding-sibling::system-page[1]/link") )
-## Set if else for index page
-###set ($previousPage = $_XPathTool.selectSingleNode($currentPage, "preceding-sibling::system-page[name !='index']/link") )
+## Get Previous and Next Pages, ignoring 'index' if desired
+#set ( $previousPageNode = $_XPathTool.selectSingleNode($currentPage, "preceding-sibling::system-page[1]/link") )
+#set ( $nextPageNode = $_XPathTool.selectSingleNode($currentPage, "following-sibling::system-page/link") )
 
-## NEXT PAGE
-#set ($nextPage = $_XPathTool.selectSingleNode($currentPage, "following-sibling::system-page/link") )
-## Set if else for index page
-###set ($nextPage = $_XPathTool.selectSingleNode($currentPage, "following-sibling::system-page[name !='index']/link") )
+#set ( $previousLink = $previousPageNode ? $previousPageNode.value : "" )
+#set ( $nextLink = $nextPageNode ? $nextPageNode.value : "" )
+
+#set ( $defaultPrevious = "https://www.index.html" )
+
+## Image sources
+#set ( $prevImg = "https://www.page-previous.gif" )
+#set ( $prevImgFaded = "https://www.page-previous_faded.gif" )
+#set ( $nextImg = "https://www.page-next.gif" )
+#set ( $nextImgFaded = "https://www.page-next_faded.gif" )
 
 <div style="float: right;">
-#if ($previousPage.value == $null)
-    <a class="classPrevious" href="https://www.index.html">
-        <img title="Previous Page" onmouseout="this.src='/page-previous_faded.gif'" onmouseover="this.src='https://www.page-previous.gif'" src="https://www.page-previous_faded.gif" alt="Previous Page" border="0"/></a>
-    <a class="classNext" href="${nextPage.value}">
-        <img title="Next Page" onmouseout="this.src='https://www.page-next_faded.gif'" onmouseover="this.src='https://www.page-next.gif'" src="https://www.page-next_faded.gif" alt="Next Page" border="0"/></a>
+    <a class="classPrevious" href="$!{previousLink != '' ? previousLink : $defaultPrevious}">
+        <img title="Previous Page"
+             src="$prevImgFaded"
+             onmouseover="this.src='$prevImg'"
+             onmouseout="this.src='$prevImgFaded'"
+             alt="Previous Page" style="border: none;" />
+    </a>
 
-#else
-    <a class="classPrevious" href="${previousPage.value}">
-        <img title="Previous Page" onmouseout="this.src='https://www.page-previous_faded.gif'" onmouseover="this.src='https://www.page-previous.gif'" src="https://www.page-previous_faded.gif" alt="Previous Page" border="0"/></a>
-    <a class="classNext" href="${nextPage.value}">
-        <img title="Next Page" onmouseout="this.src='https://www.page-next_faded.gif'" onmouseover="this.src='https://www.page-next.gif'" src="https://www.page-next_faded.gif" alt="Next Page" border="0"/></a>
-#end
+    #if ($nextLink != "")
+    <a class="classNext" href="$nextLink">
+        <img title="Next Page"
+             src="$nextImgFaded"
+             onmouseover="this.src='$nextImg'"
+             onmouseout="this.src='$nextImgFaded'"
+             alt="Next Page" style="border: none;" />
+    </a>
+    #end
 </div>
+
