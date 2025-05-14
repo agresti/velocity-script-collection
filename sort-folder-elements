@@ -1,617 +1,83 @@
 #set ( $requirements = $_XPathTool.selectNodes($contentRoot, "/system-index-block/system-page[not(contains(path,'index'))]") )
-#set ( $data = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block/calling-page/system-page/system-data-structure") )
+
+## Utility macro to render a section header
+#macro(renderSectionHeader $sectionName)
+  <br />
+  <span style="line-height:11pt;"><b><font size="3">$sectionName</font></b></span>
+#end
+
+## Utility macro to render a requirement row
+#macro(renderRequirementRow $link $code $title $judgment)
+  <tr>
+    <td style="vertical-align: top;">
+      #if ($judgment == "Compliance")
+        <img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;" />
+      #elseif ($judgment == "Non-Compliance")
+        <img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" />
+      #else
+        <img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" />
+      #end
+    </td>
+    <td style="vertical-align: top; white-space: nowrap;">
+      <a href="$link">$code</a>&#160;-&#160;
+    </td>
+    <td>
+      <div>$_SerializerTool.serialize($title, true)</div>
+    </td>
+  </tr>
+#end
+
+## List of section titles in order
+#set($sectionTitles = [
+  "Section 1: The Principle of Integrity",
+  "Section 2: Mission",
+  "Section 3: Basic Eligibility Standard",
+  "Section 4: Governing Board",
+  "Section 5: Administration and Organization",
+  "Section 6: Faculty",
+  "Section 7: Institutional Planning and Effectiveness",
+  "Section 8: Student Achievement",
+  "Section 9: Educational Program Structure and Content",
+  "Section 10: Educational Policies, Procedures, and Practices",
+  "Section 11: Library and Learning/Information Resources",
+  "Section 12: Academic and Student Support Services",
+  "Section 13: Financial and Physical Resources",
+  "Section 14: Transparency and Institutional Representation"
+])
 
 <div id="ctl00_CPHMain_PControlBox">
-
-    
 #if ( $requirements.size() > 0 )
 
-        $_SortTool.addSortCriterion("code", "en", "text", "ascending", "upper-first")
-        $_SortTool.sort($requirements)
-        
-               
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 1: The Principle of Integrity" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 1: The Principle of Integrity</font></b></span>
+  $_SortTool.addSortCriterion("code", "en", "text", "ascending", "upper-first")
+  $_SortTool.sort($requirements)
+
+  #foreach($sectionTitle in $sectionTitles)
+    ## Check if the section exists at all
+    #set($hasSection = false)
+    #foreach($s in $requirements)
+      #set($sec = $_XPathTool.selectSingleNode($s, "system-data-structure/section").value)
+      #if($sec == $sectionTitle)
+        #set($hasSection = true)
         #break
+      #end
     #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
 
-            
-#if ( $section == "Section 1: The Principle of Integrity" )
-                    <tr>
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>                
-#end
+    #if($hasSection)
+      #renderSectionHeader($sectionTitle)
+      <table cellpadding="0" cellspacing="0">
+        #foreach($r in $requirements)
+          #set($sec = $_XPathTool.selectSingleNode($r, "system-data-structure/section").value)
+          #if($sec == $sectionTitle)
+            #set($title = $r.getChild("title"))
+            #set($link = $r.getChild("link").value)
+            #set($code = $_XPathTool.selectSingleNode($r, "system-data-structure/code").value)
+            #set($judgment = $_XPathTool.selectSingleNode($r, "system-data-structure/judgments").value)
+            #renderRequirementRow($link $code $title $judgment)
+          #end
         #end
-                </table>
-                                
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 2: Mission" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 2: Mission</font></b></span>
-        #break
+      </table>
     #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-           
-#if ( $section == "Section 2: Mission" )
-
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>                
-#end
-        #end        
-                </table>
-                               
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 3: Basic Eligibility Standard" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 3: Basic Eligibility Standard</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 3: Basic Eligibility Standard" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                        
-                    </tr>                
-#end
-        #end
-                </table>
-
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 4: Governing Board" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 4: Governing Board</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 4: Governing Board" )
-
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>                
-#end
-        #end
-                </table>        
-
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 5: Administration and Organization" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 5: Administration and Organization</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 5: Administration and Organization" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                        
-                    </tr>                
-#end
-        #end
-                </table>
-                
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 6: Faculty" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 6: Faculty</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 6: Faculty" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>
-                        
-                    </tr>                
-#end
-        #end
-                </table>
-                
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 7: Institutional Planning and Effectiveness" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 7: Institutional Planning and Effectiveness</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 7: Institutional Planning and Effectiveness" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>                
-#end
-        #end
-                </table>        
-        
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 8: Student Achievement" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 8: Student Achievement</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 8: Student Achievement" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>                
-#end
-        #end
-                </table>        
-
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 9: Educational Program Structure and Content" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 9: Educational Program Structure and Content</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 9: Educational Program Structure and Content" )
-
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                        
-                    </tr>               
-#end
-        #end
-                </table>
-                
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 10: Educational Policies, Procedures, and Practices" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 10: Educational Policies, Procedures, and Practices</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 10: Educational Policies, Procedures, and Practices" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>               
-#end
-        #end
-                </table> 
-                
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 11: Library and Learning/Information Resources" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 11: Library and Learning/Information Resources</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 11: Library and Learning/Information Resources" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>               
-#end
-        #end
-                </table>
-                
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 12: Academic and Student Support Services" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 12: Academic and Student Support Services</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 12: Academic and Student Support Services" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                        
-                    </tr>                
-#end
-        #end
-                </table>        
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 13: Financial and Physical Resources" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 13: Financial and Physical Resources</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 13: Financial and Physical Resources" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td> 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>               
-#end
-        #end
-                </table>        
-#foreach ( $s in $requirements )
-    #set ( $section    = $_XPathTool.selectSingleNode( $s, "system-data-structure/section").value )
-    
-    #if ( $section == "Section 14: Transparency and Institutional Representation" )
-    <br />
-            <span style="line-height:11pt;"><b><font size="3">Section 14: Transparency and Institutional Representation</font></b></span>
-        #break
-    #end
-#end
-                <table cellpadding="0" cellspacing="0">
-#foreach ( $r in $requirements )
-            #set ( $title   = $r.getChild("title") )
-            #set ( $link    = $r.getChild("link").value )
-            #set ( $section    = $_XPathTool.selectSingleNode( $r, "system-data-structure/section").value )
-            #set ( $code    = $_XPathTool.selectSingleNode( $r, "system-data-structure/code").value )
-
-            
-#if ( $section == "Section 14: Transparency and Institutional Representation" )
-                    <tr>
-
-                            #set ( $judgments    = $_XPathTool.selectSingleNode( $r, "system-data-structure/judgments").value )
-                            #if ( $judgments == "Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/COMPLIANT.GIF" style="margin-right: 10px;"  /></td>
-                    
-                            #elseif ( $judgments == "Non-Compliance" )
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NON_COMPLIANT.GIF" style="margin-right: 10px;" /></td> 
-                                
-                            #else
-                                <td style="vertical-align: top;"><img src="_files/IMAGES/NOT_APPLICABLE.GIF" style="margin-right: 10px;" /></td>
- 
-                            #end
-
-                                <td style="vertical-align: top; white-space: nowrap;">
-                                    <a href="${link}" style="">$code</a>&#160;-&#160;
-                                </td>
-                        
-                                <td>
-                                    <div style="">$_SerializerTool.serialize($title, true)</div>
-                                </td>                       
-                    </tr>               
-#end
-        #end
-                </table>        
-                 
+  #end
 #end
 </div>
+
