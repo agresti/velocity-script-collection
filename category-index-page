@@ -1,62 +1,36 @@
 #set($block = $_XPathTool.selectSingleNode($contentRoot, "/system-index-block"))
 #set($page = $_XPathTool.selectSingleNode($block, "calling-page/system-page"))
-#set($data = $_XPathTool.selectSingleNode($page, "system-data-structure"))
+#set($pageData = $_XPathTool.selectSingleNode($page, "system-data-structure"))
+#set($currentFolder = $!currentPage.parentFolder.metadata.title)
 
-#set ( $currentFolder = $currentPage.parentFolder.metadata.title )
+#set($subPages = $_XPathTool.selectNodes($contentRoot, "//system-page[name != 'index']"))
 
-#set ($subCats = $_XPathTool.selectNodes($contentRoot, "//system-page[name != 'index']"))
+#if($subPages.size() > 0)
+<div class="columnsWrapper">
+  #foreach($subPage in $subPages)
+    #set($index = $foreach.index)
+    #set($columnClass = $_MathTool.mod($index, 2) == 0 ? "pageColLeft" : "pageColRight")
+    
+    #set($pageName = $subPage.getChild("name").value)
+    #set($pageTitle = $subPage.getChild("title"))
+    #set($pageData = $subPage.getChild("system-data-structure"))
+    #set($pageIntro = $pageData.getChild("introduction"))
+    #set($pageLink = $subPage.getChild("link").value)
 
-#if ( $subCats.size() > 0 )
-
-<div class="pageColRight">
-
-#foreach ( $subCat in $subCats )
-
-   #set ( $name = $subCat.getChild("name").value )
-   #set ( $title   = $subCat.getChild("title") )
-   #set ( $data = $subCat.getChild("system-data-structure") )
-   #set ( $subContent = $data.getChild("introduction") )
-   #set ( $subCatlink = $subCat.getChild("link").value )
-
-#if ($_MathTool.mod($foreach.index, 2) == 1) 
-    <article class="supportingContent">
-
-        #if ( $name != "index" )
-        <h1>$title.value</h1>
-        #if ( $subContent != "")
-        <p>$_SerializerTool.serialize($subContent, true)</p>
-        #end
-        <p><a class="arrowBox buttonText" href="${subCatlink}">Course Details</a></p>
-        #end
-        
-   </article>
-#end
-
-#end
+    #if($pageName != "index")
+      <div class="$columnClass">
+        <article class="supportingContent">
+          <h1>$!pageTitle.value</h1>
+          
+          #if($pageIntro && $pageIntro != "")
+            <p>$_SerializerTool.serialize($pageIntro, true)</p>
+          #end
+          
+          <p><a class="arrowBox buttonText" href="$!pageLink">Course Details</a></p>
+        </article>
+      </div>
+    #end
+  #end
 </div>
-
-<div class="pageColLeft">
-#foreach ( $subCat in $subCats )
-   #set ( $name = $subCat.getChild("name").value )
-   #set ( $title   = $subCat.getChild("title") )
-   #set ( $data = $subCat.getChild("system-data-structure") )
-   #set ( $subContent = $data.getChild("introduction") )
-   #set ( $subCatlink = $subCat.getChild("link").value )
- 
-#if ($_MathTool.mod($foreach.index, 2) == 0) 
-    <article class="supportingContent">
-
-        #if ( $name != "index" )
-        <h1>$title.value</h1>
-        #if ( $subContent != "")
-        <p>$_SerializerTool.serialize($subContent, true)</p>
-        #end
-        <p><a class="arrowBox buttonText" href="${subCatlink}">Course Details</a></p>
-        #end
-        
-   </article>
 #end
-#end
-</div>
 
-#end
