@@ -1,5 +1,5 @@
 # Velocity Script Collection
-A curated collection of Velocity scripts designed for use with **Cascade CMS**. These snippets handle common templating tasks, such as sorting, formatting, metadata management, and responsive layout behaviors.
+During my work with Cascade CMS, I developed a collection of reusable Velocity scripts to solve repetitive templating challenges. This library includes solutions for sorting content, handling dynamic image paths, generating social media metadata, alternating layouts, and building structured course catalogs — all designed with clarity, reusability, and performance in mind.
 
 ---
 
