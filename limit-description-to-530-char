@@ -1,14 +1,15 @@
 <script type="text/javascript">
 // <![CDATA[#protect
-//limit description to 530 characters
-$(document).ready(function() {
+$(document).ready(function () {
+    $(".classDescriptionLimit").each(function () {
+        const currentText = $(this).text().trim();
+        const limit = 530;
 
-        $(".classDescriptionLimit").text(function(index, currentText) {
-            var limit = currentText.substr(0, 530);
-            if (limit.length >= 530) {
-                return limit + "...";
-            }
-        });
+        if (currentText.length > limit) {
+            $(this).text(currentText.substring(0, limit) + "...");
+        }
+    });
 });
 // #protect]]>
 </script>
+
