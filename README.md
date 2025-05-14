@@ -1,23 +1,57 @@
-# velocity-script-collection
-A collection of Velocity scripts for Cascade CMS.
+# Velocity Script Collection
+A curated collection of Velocity scripts designed for use with **Cascade CMS**. These snippets handle common templating tasks, such as sorting, formatting, metadata management, and responsive layout behaviors.
 
-## dynamic-picture
-🌳 *point to the picture dynamically by replacing the part of the  string.*
+---
 
-## velocity-format-facebook
-🌳 *Format, when it tied to the corresponding region of the template, it will pull the image and description provided by the user when sharing the particular page on facebook. If img and description are not provided, it will pull the default.*
+## 📸 dynamic-picture
+Dynamically replaces part of the image path string to switch between formats (e.g., full to cropped). Useful for responsive or alternate image display scenarios.
 
-## velocity-format-even-odd
-🌳 *Two different classes to alternate between in a foreach loop.*
+---
 
-## sort-folder-elements
-🌳 *The Velocity script sorts elements in a folder by title, judgment and displays elements on the index page. The current Folder XML block needs to be assigned to the same region.*
+## 📘 velocity-format-facebook
+Generates dynamic Open Graph metadata for Facebook sharing.  
+✔️ Pulls custom image and description from the page’s `facebookContent` region if available.  
+❌ Falls back to default image and description if not provided.
 
-## course-catalog-program-script
-🌳 *Course Catalog script. Displays the list of classes for a program and opens the requirements dropdown on click. Calling page index block is required.*
+---
 
-## next-page-format
-🌳 *Switching between pages on icon click. The current folder block is needed.*
+## 🔀 velocity-format-even-odd
+Alternates between two CSS classes (e.g., `newsLeft` / `newsRight`) based on the index within a `#foreach` loop. Ideal for creating visually balanced layouts.
 
-## category-index-page
-🌳 *The current folder index block is needed. Pulling sub-category metadata and alternating on the page into two columns.* 
+---
+
+## 📂 sort-folder-elements
+Sorts and displays pages from the current folder based on custom metadata such as `title`, `judgments`, or `code`.  
+➡️ Requires the **Current Folder XML block** assigned to the correct region.
+
+---
+
+## 📚 course-catalog-program-script
+Displays a structured list of courses for a specific program.  
+Includes expandable requirements with course details and prerequisites.  
+⚙️ Requires an **Index Block** configured on the calling page.
+
+---
+
+## ▶️ next-page-format
+Enables navigation between sibling pages using clickable previous/next icons.  
+Requires the **Current Folder Block** to determine sequence.
+
+---
+
+## 🗂 category-index-page
+Pulls and displays metadata from subcategory pages (excluding `index`) and splits them into two alternating columns.  
+✔️ Requires an **Index Block** on the current folder.
+
+---
+
+### 💡 Notes
+- All snippets assume XPath-based access to Cascade CMS structured content.
+- You can mix and match these scripts across templates depending on region configurations.
+- Each script is production-tested and modular for adaptation.
+
+---
+
+### 📁 License
+This repository is shared for educational and portfolio purposes.
+
