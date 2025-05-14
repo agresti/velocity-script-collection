@@ -1,28 +1,28 @@
 <script type="text/javascript">
 // <![CDATA[#protect
-//limit description to 530 characters
-$(document).ready(function() {
-    
-    String.prototype.allReplace = function(obj) {
-        var retStr = this;
-        for (var x in obj) {
-            retStr = retStr.replace(new RegExp(x, 'g'), obj[x]);
-        }
-        return retStr;
+$(document).ready(function () {
+    function allReplace(str, map) {
+        return Object.keys(map).reduce(function (acc, key) {
+            return acc.replace(new RegExp(key, 'g'), map[key]);
+        }, str);
+    }
+
+    const replacements = {
+        'â€™': "'",
+        'â€“': '-'
     };
 
-    $(".classDescriptionLimit").text(function(index, currentText) {
-        
-        var limit = currentText.substr(0, 530);
-        if (limit.length >= 530) {
+    $(".classDescriptionLimit").each(function () {
+        const currentText = $(this).text();
+        let trimmed = currentText.substring(0, 530);
+        trimmed = allReplace(trimmed, replacements);
 
-            return limit.allReplace({'â€™':"'",'â€“':'-'}) + "...";
+        if (currentText.length > 530) {
+            trimmed += "...";
         }
-        else {
-            return limit.allReplace({'â€™':"'",'â€“':'-'});
-        }
+
+        $(this).text(trimmed);
     });
-    
 });
 // #protect]]>
 </script>
